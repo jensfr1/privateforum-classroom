@@ -8,7 +8,7 @@
     <packagename language="de">Private Foren Classroom</packagename>
     <packagedescription>Classroom/course system for private forums using FlexibleList.</packagedescription>
     <packagedescription language="de">Classroom/Kurs-System für private Foren basierend auf FlexibleList.</packagedescription>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <date>2026-03-19</date>
   </packageinformation>
 
@@ -33,6 +33,7 @@
     <instruction type="template">templates.tar</instruction>
     <instruction type="objectType">objectType.xml</instruction>
     <instruction type="box">box.xml</instruction>
+    <instruction type="eventListener">eventListener.xml</instruction>
     <instruction type="page">page.xml</instruction>
     <instruction type="language">language/*.xml</instruction>
   </instructions>
@@ -43,6 +44,7 @@
     <instruction type="template">templates.tar</instruction>
     <instruction type="objectType">objectType.xml</instruction>
     <instruction type="box">box.xml</instruction>
+    <instruction type="eventListener">eventListener.xml</instruction>
     <instruction type="page">page.xml</instruction>
     <instruction type="language">language/*.xml</instruction>
   </instructions>

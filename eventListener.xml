@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/eventListener.xsd">
+  <import>
+    <eventlistener name="classroomFlexibleListAccess">
+      <environment>user</environment>
+      <eventclassname>wcf\page\FlexibleListEntryListPage</eventclassname>
+      <eventname>readData</eventname>
+      <listenerclassname>wcf\system\event\listener\ClassroomFlexibleListAccessListener</listenerclassname>
+    </eventlistener>
+
+    <eventlistener name="classroomFlexibleListEntryAccess">
+      <environment>user</environment>
+      <eventclassname>wcf\page\FlexibleListEntryPage</eventclassname>
+      <eventname>readData</eventname>
+      <listenerclassname>wcf\system\event\listener\ClassroomFlexibleListAccessListener</listenerclassname>
+    </eventlistener>
+  </import>
+</data>
