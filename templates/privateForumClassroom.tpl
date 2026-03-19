@@ -17,7 +17,7 @@
                 <li><a href="{link controller='FlexibleListEntryAdd'}databaseID={$classroom->databaseID}{/link}" class="button">
                     {icon name='plus'} <span>{lang}wcf.privateforum.classroom.addLesson{/lang}</span>
                 </a></li>
-                <li><a href="{link controller='FlexibleList' id=$classroom->databaseID}{/link}" class="button">
+                <li><a href="{link controller='FlexibleListEntryList' id=$classroom->databaseID}{/link}" class="button">
                     {icon name='gear'} <span>{lang}wcf.privateforum.classroom.manageContent{/lang}</span>
                 </a></li>
             {/if}

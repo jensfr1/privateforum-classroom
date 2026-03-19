@@ -78,12 +78,30 @@ final class ToggleClassroom implements IController
     private function createFlexibleListDatabase(PrivateForum $forum): int
     {
         try {
+            $slug = \preg_replace('/[^a-z0-9-]/', '', \strtolower(\str_replace(' ', '-', $forum->title)));
             $database = \wcf\data\flexiblelist\FlexibleListEditor::create([
                 'title' => 'Classroom: ' . $forum->title,
+                'path' => 'classroom-' . ($slug ?: $forum->privateforumID),
                 'sortField' => 'lastChangeTime',
                 'sortOrder' => 'ASC',
                 'entriesPerPage' => 50,
                 'isDisabled' => 0,
+                'enableSubject' => 1,
+                'enableTeaser' => 1,
+                'enableMessage' => 1,
+                'enableCoverImage' => 1,
+                'enableCategories' => 1,
+                'enableComments' => 0,
+                'enableReactions' => 0,
+                'enableLabels' => 0,
+                'enableTags' => 0,
+                'enableAttachments' => 1,
+                'enableDoneStatus' => 0,
+                'enableMaps' => 0,
+                'enableModeration' => 0,
+                'enableUserGeneratedContent' => 0,
+                'enableRatings' => 0,
+                'homepageDisplay' => 'card',
             ]);
 
             $databaseID = $database->databaseID;
