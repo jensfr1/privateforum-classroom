@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/6.2/package.xsd"
+  name="com.amp.privateforum.classroom">
+
+  <packageinformation>
+    <packagename>Private Forum Classroom</packagename>
+    <packagename language="de">Private Foren Classroom</packagename>
+    <packagedescription>Classroom/course system for private forums using FlexibleList.</packagedescription>
+    <packagedescription language="de">Classroom/Kurs-System für private Foren basierend auf FlexibleList.</packagedescription>
+    <version>1.0.0</version>
+    <date>2026-03-18</date>
+  </packageinformation>
+
+  <authorinformation>
+    <author>AMP</author>
+    <authorurl>https://example.com</authorurl>
+  </authorinformation>
+
+  <requiredpackages>
+    <requiredpackage minversion="6.2.0">com.woltlab.wcf</requiredpackage>
+    <requiredpackage minversion="1.0.0">com.amp.privateforum</requiredpackage>
+    <requiredpackage minversion="3.5.0">com.amp.flexiblelist</requiredpackage>
+  </requiredpackages>
+
+  <excludedpackages>
+    <excludedpackage version="7.0.0 Alpha 1">com.woltlab.wcf</excludedpackage>
+  </excludedpackages>
+
+  <instructions type="install">
+    <instruction type="file">files.tar</instruction>
+    <instruction type="database">acp/database/install_com.amp.privateforum.classroom.php</instruction>
+    <instruction type="template">templates.tar</instruction>
+    <instruction type="page">page.xml</instruction>
+    <instruction type="language">language/*.xml</instruction>
+  </instructions>
+
+  <instructions type="update" fromversion="1.0.*">
+    <instruction type="file">files.tar</instruction>
+    <instruction type="database">acp/database/install_com.amp.privateforum.classroom.php</instruction>
+    <instruction type="template">templates.tar</instruction>
+    <instruction type="page">page.xml</instruction>
+    <instruction type="language">language/*.xml</instruction>
+  </instructions>
+</package>

@@ -1,0 +1,115 @@
+name: Build WoltLab Package
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read package info
+        id: pkg
+        run: |
+          PKG_NAME=$(grep -oP 'name="[^"]+' package.xml | head -1 | sed 's/name="//')
+          VERSION=$(grep -oP '<version>[^<]+' package.xml | sed 's/<version>//')
+          echo "name=$PKG_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building $PKG_NAME v$VERSION"
+
+      - name: Build package
+        run: |
+          PKG_NAME="${{ steps.pkg.outputs.name }}"
+          VERSION="${{ steps.pkg.outputs.version }}"
+          OUTPUT="${PKG_NAME}_${VERSION}.tar.gz"
+
+          # files.tar
+          if [ -d files ]; then
+            (cd files && tar cf ../files.tar *)
+          fi
+
+          # acptemplates.tar
+          if [ -d acptemplates ]; then
+            (cd acptemplates && tar cf ../acptemplates.tar *)
+          fi
+
+          # templates.tar
+          if [ -d templates ]; then
+            (cd templates && tar cf ../templates.tar *)
+          fi
+
+          # Sammle alle Dateien
+          ITEMS="package.xml"
+          for f in files.tar acptemplates.tar templates.tar; do
+            [ -f "$f" ] && ITEMS="$ITEMS $f"
+          done
+
+          # XML Config Files
+          for xml in objectType.xml page.xml userGroupOption.xml eventListener.xml \
+                     option.xml cronjob.xml box.xml menuItem.xml templateListener.xml \
+                     acpMenu.xml aclOption.xml userOption.xml clipboardAction.xml \
+                     userNotificationEvent.xml userProfileMenu.xml acpSearchProvider.xml \
+                     bbcode.xml; do
+            [ -f "$xml" ] && ITEMS="$ITEMS $xml"
+          done
+
+          # Script PIPs
+          for php in install_*.php; do
+            [ -f "$php" ] && ITEMS="$ITEMS $php"
+          done
+
+          # Language files
+          if [ -d language ]; then
+            for lang in language/*.xml; do
+              [ -f "$lang" ] && ITEMS="$ITEMS $lang"
+            done
+          fi
+
+          # Final tar
+          tar czf "$OUTPUT" $ITEMS
+
+          # Cleanup intermediate
+          rm -f files.tar acptemplates.tar templates.tar
+
+          echo "Built: $OUTPUT ($(du -k "$OUTPUT" | cut -f1) KB)"
+          ls -la "$OUTPUT"
+
+      - name: Create/Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.pkg.outputs.version }}
+          name: "v${{ steps.pkg.outputs.version }}"
+          body: "Release ${{ steps.pkg.outputs.name }} v${{ steps.pkg.outputs.version }}"
+          files: ${{ steps.pkg.outputs.name }}_${{ steps.pkg.outputs.version }}.tar.gz
+          make_latest: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate package manifest JSON
+        run: python3 generate_manifest.py
+
+      - name: Deploy to server
+        if: success()
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          PKG_NAME="${{ steps.pkg.outputs.name }}"
+          VERSION="${{ steps.pkg.outputs.version }}"
+          rsync -e "ssh -i ~/.ssh/deploy_key" "${PKG_NAME}_${VERSION}.tar.gz" "${PKG_NAME}.json" "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/"
+          echo "Deployed ${PKG_NAME}_${VERSION}.tar.gz + ${PKG_NAME}.json"
+          rm -f ~/.ssh/deploy_key

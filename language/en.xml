@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/language.xsd"
+  languagecode="en">
+  <import>
+    <category name="wcf.privateforum.classroom">
+      <item name="wcf.privateforum.classroom.title"><![CDATA[Classroom]]></item>
+      <item name="wcf.privateforum.classroom.overview"><![CDATA[Classroom Overview]]></item>
+      <item name="wcf.privateforum.classroom.backToForum"><![CDATA[Back to Forum]]></item>
+      <item name="wcf.privateforum.classroom.backToOverview"><![CDATA[Back to Overview]]></item>
+      <item name="wcf.privateforum.classroom.lessons"><![CDATA[Lessons]]></item>
+      <item name="wcf.privateforum.classroom.lessonsCompleted"><![CDATA[lessons completed]]></item>
+      <item name="wcf.privateforum.classroom.markDone"><![CDATA[Mark as Done]]></item>
+      <item name="wcf.privateforum.classroom.completed"><![CDATA[Completed]]></item>
+      <item name="wcf.privateforum.classroom.noClassroom"><![CDATA[No classroom is active for this forum.]]></item>
+      <item name="wcf.privateforum.classroom.noModules"><![CDATA[No modules assigned yet.]]></item>
+      <item name="wcf.privateforum.classroom.noLessons"><![CDATA[This module has no lessons yet.]]></item>
+      <item name="wcf.privateforum.classroom.noContent"><![CDATA[This lesson has no content yet.]]></item>
+      <item name="wcf.privateforum.classroom.selectLesson"><![CDATA[Please select a lesson.]]></item>
+      <item name="wcf.privateforum.classroom.enable"><![CDATA[Enable Classroom]]></item>
+      <item name="wcf.privateforum.classroom.disable"><![CDATA[Disable Classroom]]></item>
+      <item name="wcf.privateforum.classroom.enabled"><![CDATA[Classroom enabled.]]></item>
+      <item name="wcf.privateforum.classroom.disabled"><![CDATA[Classroom disabled.]]></item>
+    </category>
+  </import>
+</language>

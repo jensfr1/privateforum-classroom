@@ -1,0 +1,20 @@
+# Build artifacts
+*.tar
+*.tar.gz
+files.tar
+templates.tar
+acptemplates.tar
+_tmp_*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Environment
+.env

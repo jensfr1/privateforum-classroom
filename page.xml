@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/6.2/page.xsd">
+  <import>
+    <page identifier="com.amp.privateforum.classroom.Overview">
+      <controller>wcf\page\PrivateForumClassroomPage</controller>
+      <name language="en">Classroom</name>
+      <name language="de">Classroom</name>
+      <pageType>system</pageType>
+      <permissions>user.privateforum.canView</permissions>
+      <requireObjectID>1</requireObjectID>
+    </page>
+    <page identifier="com.amp.privateforum.classroom.Module">
+      <controller>wcf\page\PrivateForumClassroomModulePage</controller>
+      <name language="en">Classroom Module</name>
+      <name language="de">Classroom Modul</name>
+      <pageType>system</pageType>
+      <parent>com.amp.privateforum.classroom.Overview</parent>
+      <permissions>user.privateforum.canView</permissions>
+      <requireObjectID>1</requireObjectID>
+    </page>
+  </import>
+</data>

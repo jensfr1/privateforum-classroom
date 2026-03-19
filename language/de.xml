@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/language.xsd"
+  languagecode="de">
+  <import>
+    <category name="wcf.privateforum.classroom">
+      <item name="wcf.privateforum.classroom.title"><![CDATA[Classroom]]></item>
+      <item name="wcf.privateforum.classroom.overview"><![CDATA[Classroom-Übersicht]]></item>
+      <item name="wcf.privateforum.classroom.backToForum"><![CDATA[Zurück zum Forum]]></item>
+      <item name="wcf.privateforum.classroom.backToOverview"><![CDATA[Zurück zur Übersicht]]></item>
+      <item name="wcf.privateforum.classroom.lessons"><![CDATA[Lektionen]]></item>
+      <item name="wcf.privateforum.classroom.lessonsCompleted"><![CDATA[Lektionen abgeschlossen]]></item>
+      <item name="wcf.privateforum.classroom.markDone"><![CDATA[Als erledigt markieren]]></item>
+      <item name="wcf.privateforum.classroom.completed"><![CDATA[Erledigt]]></item>
+      <item name="wcf.privateforum.classroom.noClassroom"><![CDATA[Für dieses Forum ist kein Classroom aktiviert.]]></item>
+      <item name="wcf.privateforum.classroom.noModules"><![CDATA[Noch keine Module zugewiesen.]]></item>
+      <item name="wcf.privateforum.classroom.noLessons"><![CDATA[Dieses Modul hat noch keine Lektionen.]]></item>
+      <item name="wcf.privateforum.classroom.noContent"><![CDATA[Diese Lektion hat noch keinen Inhalt.]]></item>
+      <item name="wcf.privateforum.classroom.selectLesson"><![CDATA[Bitte wähle eine Lektion aus.]]></item>
+      <item name="wcf.privateforum.classroom.enable"><![CDATA[Classroom aktivieren]]></item>
+      <item name="wcf.privateforum.classroom.disable"><![CDATA[Classroom deaktivieren]]></item>
+      <item name="wcf.privateforum.classroom.enabled"><![CDATA[Classroom aktiviert.]]></item>
+      <item name="wcf.privateforum.classroom.disabled"><![CDATA[Classroom deaktiviert.]]></item>
+    </category>
+  </import>
+</language>
