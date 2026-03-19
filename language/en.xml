@@ -21,6 +21,11 @@
       <item name="wcf.privateforum.classroom.disable"><![CDATA[Disable Classroom]]></item>
       <item name="wcf.privateforum.classroom.enabled"><![CDATA[Classroom enabled.]]></item>
       <item name="wcf.privateforum.classroom.disabled"><![CDATA[Classroom disabled.]]></item>
+      <item name="wcf.privateforum.classroom.manageModules"><![CDATA[Manage Modules]]></item>
+      <item name="wcf.privateforum.classroom.manageModules.description"><![CDATA[Select the FlexibleList categories to display as modules in this classroom.]]></item>
+      <item name="wcf.privateforum.classroom.saveModules"><![CDATA[Save Modules]]></item>
+      <item name="wcf.privateforum.classroom.modulesSaved"><![CDATA[Modules saved.]]></item>
+      <item name="wcf.privateforum.classroom.noDatabase"><![CDATA[No FlexibleList database configured. Please set the "Classroom FlexibleList Database ID" option in the ACP.]]></item>
     </category>
   </import>
 </language>

@@ -63,8 +63,57 @@
     {else}
         <woltlab-core-notice type="info">{lang}wcf.privateforum.classroom.noModules{/lang}</woltlab-core-notice>
     {/if}
+
+    {* Modul-Verwaltung (nur Owner) *}
+    {if $isOwner && $availableCategories|count}
+        <section class="section" style="margin-top: 30px;">
+            <h2 class="sectionTitle">{lang}wcf.privateforum.classroom.manageModules{/lang}</h2>
+            <p class="sectionDescription">{lang}wcf.privateforum.classroom.manageModules.description{/lang}</p>
+
+            <form id="assignModulesForm">
+                {foreach from=$availableCategories item=cat}
+                    <dl>
+                        <dt></dt>
+                        <dd>
+                            <label>
+                                <input type="checkbox" name="categoryIDs[]" value="{$cat[categoryID]}"{if $cat[isAssigned]} checked{/if}>
+                                {$cat[title]}
+                            </label>
+                        </dd>
+                    </dl>
+                {/foreach}
+                <div class="formSubmit">
+                    <input type="submit" value="{lang}wcf.privateforum.classroom.saveModules{/lang}" accesskey="s">
+                </div>
+            </form>
+        </section>
+    {elseif $isOwner}
+        <woltlab-core-notice type="warning" style="margin-top: 20px;">{lang}wcf.privateforum.classroom.noDatabase{/lang}</woltlab-core-notice>
+    {/if}
 {else}
     <woltlab-core-notice type="info">{lang}wcf.privateforum.classroom.noClassroom{/lang}</woltlab-core-notice>
+{/if}
+
+{if $isOwner && $classroom}
+<script data-relocate="true">
+require(['WoltLabSuite/Core/Ajax/Backend', 'WoltLabSuite/Core/Ui/Notification'], (Backend, UiNotification) => {
+    document.getElementById('assignModulesForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const checkboxes = e.target.querySelectorAll('input[name="categoryIDs[]"]:checked');
+        const categoryIDs = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+        try {
+            const url = '{$__wcf->getPath()}index.php?api/rpc/amp/privateforum/classroom/{$classroom->classroomID}/modules';
+            await Backend.prepareRequest(url).post({ categoryIDs: categoryIDs }).fetchAsJson();
+            UiNotification.show('{lang}wcf.privateforum.classroom.modulesSaved{/lang}');
+            setTimeout(() => window.location.reload(), 1000);
+        } catch (err) {
+            console.error('AssignModule error:', err);
+        }
+    });
+});
+</script>
 {/if}
 
 {include file='footer'}
