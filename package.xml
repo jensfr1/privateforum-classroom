@@ -8,8 +8,8 @@
     <packagename language="de">Private Foren Classroom</packagename>
     <packagedescription>Classroom/course system for private forums using FlexibleList.</packagedescription>
     <packagedescription language="de">Classroom/Kurs-System für private Foren basierend auf FlexibleList.</packagedescription>
-    <version>1.0.2</version>
-    <date>2026-03-18</date>
+    <version>1.0.3</version>
+    <date>2026-03-19</date>
   </packageinformation>
 
   <authorinformation>
@@ -31,6 +31,8 @@
     <instruction type="file">files.tar</instruction>
     <instruction type="database">acp/database/install_com.amp.privateforum.classroom.php</instruction>
     <instruction type="template">templates.tar</instruction>
+    <instruction type="objectType">objectType.xml</instruction>
+    <instruction type="box">box.xml</instruction>
     <instruction type="page">page.xml</instruction>
     <instruction type="language">language/*.xml</instruction>
   </instructions>
@@ -39,6 +41,8 @@
     <instruction type="file">files.tar</instruction>
     <instruction type="database">acp/database/install_com.amp.privateforum.classroom.php</instruction>
     <instruction type="template">templates.tar</instruction>
+    <instruction type="objectType">objectType.xml</instruction>
+    <instruction type="box">box.xml</instruction>
     <instruction type="page">page.xml</instruction>
     <instruction type="language">language/*.xml</instruction>
   </instructions>
