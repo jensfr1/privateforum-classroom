@@ -15,6 +15,8 @@ return [
         ->columns([
             ObjectIdDatabaseTableColumn::create('classroomID'),
             NotNullInt10DatabaseTableColumn::create('privateforumID'),
+            NotNullInt10DatabaseTableColumn::create('databaseID')
+                ->defaultValue(0),
             NotNullVarchar255DatabaseTableColumn::create('title'),
             DefaultFalseBooleanDatabaseTableColumn::create('isActive'),
             NotNullInt10DatabaseTableColumn::create('time')

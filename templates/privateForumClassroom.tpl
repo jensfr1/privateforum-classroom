@@ -13,6 +13,14 @@
     </div>
     <nav class="contentHeaderNavigation">
         <ul>
+            {if $isOwner && $classroom && $classroom->databaseID}
+                <li><a href="{link controller='FlexibleListEntryAdd'}databaseID={$classroom->databaseID}{/link}" class="button">
+                    {icon name='plus'} <span>{lang}wcf.privateforum.classroom.addLesson{/lang}</span>
+                </a></li>
+                <li><a href="{link controller='FlexibleList' id=$classroom->databaseID}{/link}" class="button">
+                    {icon name='gear'} <span>{lang}wcf.privateforum.classroom.manageContent{/lang}</span>
+                </a></li>
+            {/if}
             <li><a href="{link controller='Board' id=$forum->boardID application='wbb'}{/link}" class="button">
                 {icon name='arrow-left'} <span>{lang}wcf.privateforum.classroom.backToForum{/lang}</span>
             </a></li>
@@ -62,58 +70,14 @@
         </div>
     {else}
         <woltlab-core-notice type="info">{lang}wcf.privateforum.classroom.noModules{/lang}</woltlab-core-notice>
-    {/if}
-
-    {* Modul-Verwaltung (nur Owner) *}
-    {if $isOwner && $availableCategories|count}
-        <section class="section" style="margin-top: 30px;">
-            <h2 class="sectionTitle">{lang}wcf.privateforum.classroom.manageModules{/lang}</h2>
-            <p class="sectionDescription">{lang}wcf.privateforum.classroom.manageModules.description{/lang}</p>
-
-            <form id="assignModulesForm">
-                {foreach from=$availableCategories item=cat}
-                    <dl>
-                        <dt></dt>
-                        <dd>
-                            <label>
-                                <input type="checkbox" name="categoryIDs[]" value="{$cat[categoryID]}"{if $cat[isAssigned]} checked{/if}>
-                                {$cat[title]}
-                            </label>
-                        </dd>
-                    </dl>
-                {/foreach}
-                <div class="formSubmit">
-                    <input type="submit" value="{lang}wcf.privateforum.classroom.saveModules{/lang}" accesskey="s">
-                </div>
-            </form>
-        </section>
-    {elseif $isOwner}
-        <woltlab-core-notice type="warning" style="margin-top: 20px;">{lang}wcf.privateforum.classroom.noDatabase{/lang}</woltlab-core-notice>
+        {if $isOwner}
+            <p style="margin-top: 15px;">
+                {lang}wcf.privateforum.classroom.addModulesHint{/lang}
+            </p>
+        {/if}
     {/if}
 {else}
     <woltlab-core-notice type="info">{lang}wcf.privateforum.classroom.noClassroom{/lang}</woltlab-core-notice>
-{/if}
-
-{if $isOwner && $classroom}
-<script data-relocate="true">
-require(['WoltLabSuite/Core/Ajax/Backend', 'WoltLabSuite/Core/Ui/Notification'], (Backend, UiNotification) => {
-    document.getElementById('assignModulesForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const checkboxes = e.target.querySelectorAll('input[name="categoryIDs[]"]:checked');
-        const categoryIDs = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
-        try {
-            const url = '{$__wcf->getPath()}index.php?api/rpc/amp/privateforum/classroom/{$classroom->classroomID}/modules';
-            await Backend.prepareRequest(url).post({ categoryIDs: categoryIDs }).fetchAsJson();
-            UiNotification.show('{lang}wcf.privateforum.classroom.modulesSaved{/lang}');
-            setTimeout(() => window.location.reload(), 1000);
-        } catch (err) {
-            console.error('AssignModule error:', err);
-        }
-    });
-});
-</script>
 {/if}
 
 {include file='footer'}

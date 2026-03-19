@@ -11,15 +11,11 @@ use wcf\system\WCF;
 /**
  * Service für Classroom/Kurs-Verwaltung in Private Foren.
  *
- * Nutzt eine SHARED FlexibleList-Datenbank (ID aus PRIVATEFORUM_CLASSROOM_DATABASE_ID).
- * Jedes Classroom filtert über die Tabelle wcf1_privateforum_classroom_module,
- * welche Kategorien (= Module) zum Classroom gehören.
+ * Jedes Classroom hat eine EIGENE FlexibleList-Datenbank (databaseID im Classroom-Eintrag).
+ * Alle Kategorien dieser DB = Module. Alle Entries = Lektionen.
  */
 class ClassroomService
 {
-    /**
-     * Findet das Classroom eines PrivateForums.
-     */
     public static function getClassroomByForumID(int $privateforumID): ?PrivateForumClassroom
     {
         $sql = "SELECT * FROM wcf1_privateforum_classroom WHERE privateforumID = ?";
@@ -30,32 +26,12 @@ class ClassroomService
         return $row ? new PrivateForumClassroom(null, $row) : null;
     }
 
-    /**
-     * Gibt die dem Classroom zugewiesenen Kategorie-IDs zurück.
-     *
-     * @return int[]
-     */
-    public static function getAssignedCategoryIDs(int $classroomID): array
-    {
-        $sql = "SELECT categoryID FROM wcf1_privateforum_classroom_module
-                WHERE classroomID = ?
-                ORDER BY sortOrder ASC";
-        $statement = WCF::getDB()->prepare($sql);
-        $statement->execute([$classroomID]);
-
-        return $statement->fetchAll(\PDO::FETCH_COLUMN);
-    }
-
-    /**
-     * Markiert eine Lektion als abgeschlossen.
-     */
     public static function markLessonComplete(int $classroomID, int $entryID, int $userID): bool
     {
         if (!$classroomID || !$entryID || !$userID) {
             return false;
         }
 
-        // Prüfen ob schon completed
         $existing = self::getLessonProgress($entryID, $userID);
         if ($existing && $existing->isCompleted) {
             return false;
@@ -65,7 +41,7 @@ class ClassroomService
             $editor = new PrivateForumLessonProgressEditor($existing);
             $editor->update([
                 'isCompleted' => 1,
-                'completedTime' => \TIME_NOW,
+                'completedTime' => TIME_NOW,
             ]);
         } else {
             $action = new PrivateForumLessonProgressAction([], 'create', [
@@ -74,7 +50,7 @@ class ClassroomService
                     'entryID' => $entryID,
                     'userID' => $userID,
                     'isCompleted' => 1,
-                    'completedTime' => \TIME_NOW,
+                    'completedTime' => TIME_NOW,
                 ],
             ]);
             $action->executeAction();
@@ -83,9 +59,6 @@ class ClassroomService
         return true;
     }
 
-    /**
-     * Markiert eine Lektion als nicht abgeschlossen (Toggle).
-     */
     public static function markLessonIncomplete(int $classroomID, int $entryID, int $userID): bool
     {
         if (!$classroomID || !$entryID || !$userID) {
@@ -106,9 +79,6 @@ class ClassroomService
         return true;
     }
 
-    /**
-     * Gibt den Fortschritt einer Lektion zurück.
-     */
     public static function getLessonProgress(int $entryID, int $userID): ?PrivateForumLessonProgress
     {
         $sql = "SELECT * FROM wcf1_privateforum_lesson_progress
@@ -121,42 +91,21 @@ class ClassroomService
     }
 
     /**
-     * Gibt den Gesamtfortschritt eines Users für ein Classroom zurück.
-     * Zählt NUR Einträge in den dem Classroom zugewiesenen Kategorien.
-     *
-     * @return array{completed: int, total: int, percentage: float}
+     * Gesamtfortschritt — alle Entries in der Classroom-DB zählen.
      */
     public static function getUserProgress(int $classroomID, int $userID): array
     {
         $classroom = new PrivateForumClassroom($classroomID);
-        if (!$classroom->classroomID) {
+        if (!$classroom->classroomID || !$classroom->databaseID) {
             return ['completed' => 0, 'total' => 0, 'percentage' => 0.0];
         }
 
-        $databaseID = self::getDatabaseID();
-        if (!$databaseID) {
-            return ['completed' => 0, 'total' => 0, 'percentage' => 0.0];
-        }
-
-        // Nur zugewiesene Kategorien berücksichtigen
-        $categoryIDs = self::getAssignedCategoryIDs($classroomID);
-        if (empty($categoryIDs)) {
-            return ['completed' => 0, 'total' => 0, 'percentage' => 0.0];
-        }
-
-        // Gesamtanzahl Lektionen aus FlexibleList (nur zugewiesene Kategorien)
-        $conditions = new \wcf\system\database\util\PreparedStatementConditionBuilder();
-        $conditions->add("databaseID = ?", [$databaseID]);
-        $conditions->add("categoryID IN (?)", [$categoryIDs]);
-        $conditions->add("isDisabled = ?", [0]);
-        $conditions->add("isDeleted = ?", [0]);
-
-        $sql = "SELECT COUNT(*) FROM wcf1_flexiblelist_entry " . $conditions;
+        $sql = "SELECT COUNT(*) FROM wcf1_flexiblelist_entry
+                WHERE databaseID = ? AND isDisabled = 0 AND isDeleted = 0";
         $statement = WCF::getDB()->prepare($sql);
-        $statement->execute($conditions->getParameters());
+        $statement->execute([$classroom->databaseID]);
         $total = (int)$statement->fetchSingleColumn();
 
-        // Abgeschlossene Lektionen
         $sql = "SELECT COUNT(*) FROM wcf1_privateforum_lesson_progress
                 WHERE classroomID = ? AND userID = ? AND isCompleted = 1";
         $statement = WCF::getDB()->prepare($sql);
@@ -173,32 +122,24 @@ class ClassroomService
     }
 
     /**
-     * Gibt die Module (FlexibleList-Kategorien) eines Classrooms mit Fortschritt zurück.
-     * Nur Module die dem Classroom zugewiesen sind (JOIN mit classroom_module).
-     *
-     * @return array Jedes Modul: categoryID, title, iconName, showOrder, lessons, completedCount, totalCount, percentage
+     * Alle Kategorien der Classroom-DB = Module, mit Fortschritt.
      */
     public static function getModulesWithProgress(int $classroomID, int $userID): array
     {
         $classroom = new PrivateForumClassroom($classroomID);
-        if (!$classroom->classroomID) {
+        if (!$classroom->classroomID || !$classroom->databaseID) {
             return [];
         }
 
-        $databaseID = self::getDatabaseID();
-        if (!$databaseID) {
-            return [];
-        }
+        $databaseID = $classroom->databaseID;
 
-        // Kategorien (= Module) laden — NUR die dem Classroom zugewiesenen
-        $sql = "SELECT c.categoryID, c.title, c.iconName, c.showOrder
-                FROM wcf1_flexiblelist_category c
-                INNER JOIN wcf1_privateforum_classroom_module cm
-                    ON cm.categoryID = c.categoryID
-                WHERE c.databaseID = ? AND cm.classroomID = ?
-                ORDER BY cm.sortOrder ASC, c.showOrder ASC, c.title ASC";
+        // Kategorien laden
+        $sql = "SELECT categoryID, title, iconName, showOrder
+                FROM wcf1_flexiblelist_category
+                WHERE databaseID = ?
+                ORDER BY showOrder ASC, title ASC";
         $statement = WCF::getDB()->prepare($sql);
-        $statement->execute([$databaseID, $classroomID]);
+        $statement->execute([$databaseID]);
 
         $modules = [];
         $categoryIDs = [];
@@ -222,7 +163,7 @@ class ClassroomService
             return [];
         }
 
-        // Lektionen pro Kategorie laden
+        // Lektionen pro Kategorie
         $conditions = new \wcf\system\database\util\PreparedStatementConditionBuilder();
         $conditions->add("e.databaseID = ?", [$databaseID]);
         $conditions->add("e.categoryID IN (?)", [$categoryIDs]);
@@ -242,25 +183,22 @@ class ClassroomService
             $entryID = (int)$row['entryID'];
             $entryIDs[] = $entryID;
 
-            $lesson = [
-                'entryID' => $entryID,
-                'title' => $row['subject'],
-                'categoryID' => $catID,
-                'coverImagePath' => $row['coverImagePath'] ?? '',
-                'isCompleted' => false,
-            ];
-
             if (isset($modules[$catID])) {
-                $modules[$catID]['lessons'][] = $lesson;
+                $modules[$catID]['lessons'][] = [
+                    'entryID' => $entryID,
+                    'title' => $row['subject'],
+                    'categoryID' => $catID,
+                    'coverImagePath' => $row['coverImagePath'] ?? '',
+                    'isCompleted' => false,
+                ];
                 $modules[$catID]['totalCount']++;
-                // Erstes verfügbares Cover-Bild als Modul-Cover verwenden
                 if (empty($modules[$catID]['coverImage']) && !empty($row['coverImagePath'])) {
                     $modules[$catID]['coverImage'] = $row['coverImagePath'];
                 }
             }
         }
 
-        // Completion-Status laden
+        // Completion-Status
         if (!empty($entryIDs) && $userID) {
             $conditions = new \wcf\system\database\util\PreparedStatementConditionBuilder();
             $conditions->add("entryID IN (?)", [$entryIDs]);
@@ -294,25 +232,10 @@ class ClassroomService
         return \array_values($modules);
     }
 
-    /**
-     * Gibt die Lektionen eines bestimmten Moduls (Kategorie) mit Fortschritt zurück.
-     * Filtert nur Lektionen in den dem Classroom zugewiesenen Kategorien.
-     */
     public static function getModuleLessons(int $classroomID, int $categoryID, int $userID): array
     {
         $classroom = new PrivateForumClassroom($classroomID);
-        if (!$classroom->classroomID) {
-            return [];
-        }
-
-        $databaseID = self::getDatabaseID();
-        if (!$databaseID) {
-            return [];
-        }
-
-        // Prüfen ob Kategorie dem Classroom zugewiesen ist
-        $assignedIDs = self::getAssignedCategoryIDs($classroomID);
-        if (!\in_array($categoryID, $assignedIDs)) {
+        if (!$classroom->classroomID || !$classroom->databaseID) {
             return [];
         }
 
@@ -321,7 +244,7 @@ class ClassroomService
                 WHERE e.databaseID = ? AND e.categoryID = ? AND e.isDisabled = 0 AND e.isDeleted = 0
                 ORDER BY e.time ASC";
         $statement = WCF::getDB()->prepare($sql);
-        $statement->execute([$databaseID, $categoryID]);
+        $statement->execute([$classroom->databaseID, $categoryID]);
 
         $lessons = [];
         $entryIDs = [];
@@ -359,9 +282,6 @@ class ClassroomService
         return \array_values($lessons);
     }
 
-    /**
-     * Gibt eine einzelne Lektion mit Content zurück.
-     */
     public static function getLesson(int $entryID): ?array
     {
         $sql = "SELECT e.entryID, e.subject, e.categoryID, e.databaseID, e.time, e.message, e.teaser, e.coverImagePath
@@ -387,9 +307,6 @@ class ClassroomService
         ];
     }
 
-    /**
-     * Gibt den Kategorie-Titel zurück.
-     */
     public static function getCategoryTitle(int $categoryID): string
     {
         $sql = "SELECT title FROM wcf1_flexiblelist_category WHERE categoryID = ?";
@@ -398,17 +315,5 @@ class ClassroomService
         $row = $statement->fetchSingleRow();
 
         return $row ? $row['title'] : '';
-    }
-
-    /**
-     * Gibt die FlexibleList Database-ID aus der Konstante zurück.
-     */
-    public static function getDatabaseID(): int
-    {
-        if (\defined('PRIVATEFORUM_CLASSROOM_DATABASE_ID')) {
-            return (int)PRIVATEFORUM_CLASSROOM_DATABASE_ID;
-        }
-
-        return 0;
     }
 }

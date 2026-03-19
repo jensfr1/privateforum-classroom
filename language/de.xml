@@ -25,7 +25,9 @@
       <item name="wcf.privateforum.classroom.manageModules.description"><![CDATA[Wähle die FlexibleList-Kategorien aus, die als Module in diesem Classroom angezeigt werden sollen.]]></item>
       <item name="wcf.privateforum.classroom.saveModules"><![CDATA[Module speichern]]></item>
       <item name="wcf.privateforum.classroom.modulesSaved"><![CDATA[Module gespeichert.]]></item>
-      <item name="wcf.privateforum.classroom.noDatabase"><![CDATA[Keine FlexibleList-Datenbank konfiguriert. Bitte im ACP die Option „Classroom FlexibleList-Datenbank-ID" setzen.]]></item>
+      <item name="wcf.privateforum.classroom.addLesson"><![CDATA[Lektion hinzufügen]]></item>
+      <item name="wcf.privateforum.classroom.manageContent"><![CDATA[Inhalte verwalten]]></item>
+      <item name="wcf.privateforum.classroom.addModulesHint"><![CDATA[Nutze den „Inhalte verwalten" Button um Module (Kategorien) und Lektionen (Einträge) hinzuzufügen.]]></item>
     </category>
   </import>
 </language>

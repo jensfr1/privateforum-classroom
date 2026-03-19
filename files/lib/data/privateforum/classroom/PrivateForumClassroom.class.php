@@ -8,6 +8,7 @@ use wcf\data\privateforum\forum\PrivateForum;
 /**
  * @property-read int $classroomID
  * @property-read int $privateforumID
+ * @property-read int $databaseID
  * @property-read string $title
  * @property-read int $isActive
  * @property-read int $time
