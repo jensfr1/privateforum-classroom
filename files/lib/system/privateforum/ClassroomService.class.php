@@ -315,7 +315,7 @@ class ClassroomService
                      INNER JOIN wcf1_flexiblelist_entry_field_value fv
                          ON fv.fieldID = f.fieldID AND fv.entryID = ?
                      WHERE f.databaseID = ?
-                     ORDER BY f.sortOrder ASC, f.fieldID ASC";
+                     ORDER BY f.showOrder ASC, f.fieldID ASC";
         $fieldStatement = WCF::getDB()->prepare($fieldSql);
         $fieldStatement->execute([$entryID, $databaseID]);
         while ($fieldRow = $fieldStatement->fetchArray()) {
