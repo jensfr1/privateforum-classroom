@@ -270,6 +270,39 @@
     margin: 16px 0;
 }
 
+/* === Custom Fields === */
+.pfLessonCustomFields {
+    margin-top: 24px;
+}
+.pfLessonField {
+    margin-bottom: 20px;
+}
+.pfLessonFieldLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--wcfContentDimmedText);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.pfLessonFieldValue {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--wcfContentText);
+}
+.pfLessonFieldValue img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+.pfLessonFieldValue video,
+.pfLessonFieldValue iframe {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
 /* === Responsive === */
 @media (max-width: 768px) {
     .pfModuleGrid {

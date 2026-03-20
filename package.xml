@@ -8,8 +8,8 @@
     <packagename language="de">Private Foren Classroom</packagename>
     <packagedescription>Classroom/course system for private forums using FlexibleList.</packagedescription>
     <packagedescription language="de">Classroom/Kurs-System für private Foren basierend auf FlexibleList.</packagedescription>
-    <version>1.0.5</version>
-    <date>2026-03-19</date>
+    <version>1.0.6</version>
+    <date>2026-03-20</date>
   </packageinformation>
 
   <authorinformation>

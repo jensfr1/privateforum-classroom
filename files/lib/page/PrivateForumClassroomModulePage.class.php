@@ -116,6 +116,7 @@ class PrivateForumClassroomModulePage extends AbstractPage
                 $this->activeLesson['message'] = $fullLesson['message'];
                 $this->activeLesson['teaser'] = $fullLesson['teaser'];
                 $this->activeLesson['coverImagePath'] = $fullLesson['coverImagePath'];
+                $this->activeLesson['customFields'] = $fullLesson['customFields'] ?? [];
 
                 // Completion-Status für aktive Lektion prüfen
                 if ($userID) {

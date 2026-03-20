@@ -89,7 +89,22 @@
                     <div class="pfLessonBody">
                         <p>{$activeLesson[teaser]}</p>
                     </div>
-                {else}
+                {/if}
+
+                {if $activeLesson[customFields]|isset && $activeLesson[customFields]|count}
+                    <div class="pfLessonCustomFields">
+                        {foreach from=$activeLesson[customFields] item=customField}
+                            <div class="pfLessonField">
+                                <h3 class="pfLessonFieldLabel">{$customField[fieldName]}</h3>
+                                <div class="pfLessonFieldValue htmlContent">
+                                    {unsafe:$customField[formattedValue]}
+                                </div>
+                            </div>
+                        {/foreach}
+                    </div>
+                {/if}
+
+                {if !$activeLesson[message] && !$activeLesson[teaser] && (!$activeLesson[customFields]|isset || !$activeLesson[customFields]|count)}
                     <div class="pfLessonBody">
                         <woltlab-core-notice type="info">{lang}wcf.privateforum.classroom.noContent{/lang}</woltlab-core-notice>
                     </div>

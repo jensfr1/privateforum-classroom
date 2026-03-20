@@ -295,7 +295,7 @@ class ClassroomService
             return null;
         }
 
-        return [
+        $result = [
             'entryID' => (int)$row['entryID'],
             'title' => $row['subject'],
             'categoryID' => (int)$row['categoryID'],
@@ -304,7 +304,34 @@ class ClassroomService
             'teaser' => $row['teaser'] ?? '',
             'coverImagePath' => $row['coverImagePath'] ?? '',
             'time' => (int)$row['time'],
+            'customFields' => [],
         ];
+
+        // Custom Fields laden (EAV)
+        $databaseID = (int)$row['databaseID'];
+        $fieldSql = "SELECT f.fieldID, f.fieldName, f.fieldType, f.fieldConfig,
+                            fv.fieldValue
+                     FROM wcf1_flexiblelist_field f
+                     INNER JOIN wcf1_flexiblelist_entry_field_value fv
+                         ON fv.fieldID = f.fieldID AND fv.entryID = ?
+                     WHERE f.databaseID = ?
+                     ORDER BY f.sortOrder ASC, f.fieldID ASC";
+        $fieldStatement = WCF::getDB()->prepare($fieldSql);
+        $fieldStatement->execute([$entryID, $databaseID]);
+        while ($fieldRow = $fieldStatement->fetchArray()) {
+            if (empty($fieldRow['fieldValue'])) continue;
+
+            $field = new \wcf\data\flexiblelist\field\FlexibleListField(null, $fieldRow);
+            $result['customFields'][] = [
+                'fieldID' => (int)$fieldRow['fieldID'],
+                'fieldName' => $fieldRow['fieldName'],
+                'fieldType' => $fieldRow['fieldType'],
+                'formattedValue' => $field->getFormattedValue($fieldRow['fieldValue']),
+                'rawValue' => $fieldRow['fieldValue'],
+            ];
+        }
+
+        return $result;
     }
 
     public static function getCategoryTitle(int $categoryID): string
